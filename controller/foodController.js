@@ -1,4 +1,4 @@
-import { restaurantsModel, itemsModel, orderedModel } from '../model/foodModels.js';
+import { restaurantsModel, itemsModel, orderedModel, usersModel } from '../model/foodModels.js';
 
 const createRestaurant = async (req, res) => {
     const { title, img, country, city, address, email, password, description} = req.body
@@ -69,15 +69,28 @@ const findRestaurant = async (req, res) => {
 };
 
 const logInRestaurant = async (req, res) => {
-    const emailprofile = req.params.email;
-    const passwordprofile = req.params.password;
+    const emailProfile = req.params.email;
+    const passwordProfile = req.params.password;
 
     const restaurant = await restaurantsModel.find({
-        email: emailprofile,
-        password: passwordprofile,
+        email: emailProfile,
+        password: passwordProfile,
     });
     if (restaurant.length > 0){
         res.send(restaurant)
+    }else {
+        res.status(404).send("No restaurant found");
+    }
+};
+
+const getRestaurants = async (req, res) => {
+    const restaurantId = req.params.id;
+
+    const oneRestaurant = await restaurantsModel.find({
+        _id: restaurantId
+    });
+    if (oneRestaurant.length > 0){
+        res.send(oneRestaurant)
     }else {
         res.status(404).send("No restaurant found");
     }
@@ -111,6 +124,75 @@ const getItem = async (req, res) => {
     }
 };
 
+const createOrder = async (req, res) => {
+    const { restaurantId, userId, restaurantCountry, restaurantCity, restaurantAddress, userCountry, userCity, userAddress, total, listItems } = req.body;
+
+    const createOrder = await orderedModel.create({
+        restaurantId, userId, restaurantCountry, restaurantCity, restaurantAddress, userCountry, userCity, userAddress, total, listItems
+    });
+
+    if (createOrder){
+        res.send(createOrder)
+    }else {
+        res.status(500).send("Unsuccessful");
+    }
+};
+
+const getRestaurantsOrder = async (req, res) => {
+    const restaurantId = req.params.id;
+
+    const orderList = await orderedModel.find({
+        restaurantId: restaurantId
+    });
+    if (orderList.length > 0){
+        res.send(orderList)
+    }else {
+        res.status(404).send("No restaurant order was found");
+    }
+};
+
+const getUserOrder = async (req, res) => {
+    const userId = req.params.id;
+
+    const orderList = await orderedModel.find({
+        userId: userId
+    });
+    if (orderList.length > 0){
+        res.send(orderList)
+    }else {
+        res.status(404).send("No restaurant order was found for this user");
+    }
+};
+
+const createUser = async (req, res) => {
+    const { name, img, email, password, country, city, address } = req.body;
+
+    const createUser = await usersModel.create({
+        name, img, email, password, country, city, address
+    });
+    if (createUser){
+        res.send(createUser)
+    }else {
+        res.status(500).send("Unsuccessful");
+    }
+};
+
+const getUser = async (req, res) => {
+    const emailProfile = req.params.email;
+    const passwordProfile = req.params.password;
+
+    const user = await usersModel.find({
+        email: emailProfile,
+        password: passwordProfile,
+    });
+
+    if (user.length > 0) {
+        res.send(user);
+    }else {
+        res.status(404).send("No User found");
+    }
+}
+
 export { 
     createRestaurant, 
     findRestaurant, 
@@ -118,5 +200,11 @@ export {
     findCountryRestaurant, 
     findCityRestaurant,
     logInRestaurant,
+    getRestaurants,
     createItem,
-    getItem };
+    getItem,
+    createOrder,
+    getRestaurantsOrder,
+    getUserOrder,
+    createUser, 
+    getUser};

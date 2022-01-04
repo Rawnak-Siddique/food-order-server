@@ -6,7 +6,13 @@ import { createRestaurant,
     findCityRestaurant,
     logInRestaurant,
     createItem,
-    getItem } from '../controller/foodController.js';
+    getItem, 
+    getRestaurants, 
+    createOrder, 
+    getRestaurantsOrder, 
+    getUserOrder, 
+    createUser, 
+    getUser} from '../controller/foodController.js';
 
 const routes = Express.Router();
 
@@ -22,8 +28,20 @@ routes.get('/find-restaurant/:country/:city', findRestaurant);
 
 routes.get('/log-in-restaurant/:email/:password', logInRestaurant);
 
+routes.get('/get-restaurant/:id', getRestaurants);
+
 routes.post('/create-item', createItem);
 
 routes.get('/get-item/:id', getItem);
+
+routes.post('/create-order', createOrder);
+
+routes.get('/get-restaurant-order/:id', getRestaurantsOrder);
+
+routes.get('/get-user-order/:id', getUserOrder);
+
+routes.post('/create-profile', createUser);
+
+routes.get('/log-in-profile/:email/:password', getUser);
 
 export default routes;
